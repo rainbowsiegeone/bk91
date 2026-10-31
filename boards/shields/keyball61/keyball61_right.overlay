@@ -1,69 +1,12 @@
 /*
- * Правая половина Keyball61 (с трекболом PMW3360).
- * Пины взяты из схемы keyball61_right.kicad_sch:
- *   NCS  -> Pro Micro D10  (P0.09)
- *   MOSI -> Pro Micro D16  (P0.10)
- *   MISO -> Pro Micro D14  (P1.11)
- *   SCLK -> Pro Micro D15  (P1.13)
- * Это стандартные SPI-пины Pro Micro, их использует &pro_micro_spi.
- * Вывода MOTION на разъёме датчика нет, поэтому драйвер работает в режиме опроса.
+ * ТЕСТОВАЯ версия: без трекбола (SPI отключён).
+ * Нужна только для проверки, мешает ли трекбол опросу клавиш ряда 4.
+ * Содержимое вставить в keyball61_right.overlay вместо оригинала.
  */
 
 #include "keyball61.dtsi"
-#include <zephyr/dt-bindings/input/input-event-codes.h>
-#include <input/processors.dtsi>
-#include <dt-bindings/zmk/input_transform.h>
 
 /* Ключи правой половины идут в карте после ключей левой */
 &default_transform {
     col-offset = <9>;
-};
-
-&pro_micro_spi {
-    status = "okay";
-    cs-gpios = <&pro_micro 10 GPIO_ACTIVE_LOW>;
-
-    trackball: trackball@0 {
-        compatible = "pixart,pmw3360";
-        reg = <0>;
-        spi-max-frequency = <2000000>;
-        cpi = <500>;            /* как KEYBALL_CPI_DEFAULT в QMK */
-        /* rotate-90; */        /* раскомментируйте, если оси повёрнуты */
-    };
-};
-
-/ {
-    input_processors {
-        /* Масштабирование прокрутки с накоплением остатка.
-         * Именно это исправляет «рывки», которые мы лечили в QMK. */
-        kb_scroll_scaler: kb_scroll_scaler {
-            compatible = "zmk,input-processor-scaler";
-            #input-processor-cells = <2>;
-            type = <INPUT_EV_REL>;
-            codes = <INPUT_REL_WHEEL INPUT_REL_HWHEEL>;
-            track-remainders;
-        };
-    };
-
-    trackball_listener: trackball_listener {
-        compatible = "zmk,input-listener";
-        device = <&trackball>;
-
-        /* Оси датчика повёрнуты на 90 градусов относительно курсора:
-         * меняем X и Y местами (как в оригинальной прошивке Keyball для правого шарика).
-         * Если после этого горизонталь окажется зеркальной, замените на
-         * (INPUT_TRANSFORM_XY_SWAP | INPUT_TRANSFORM_X_INVERT) или
-         * (INPUT_TRANSFORM_XY_SWAP | INPUT_TRANSFORM_Y_INVERT). */
-        input-processors = <&zip_xy_transform INPUT_TRANSFORM_XY_SWAP>;
-
-        /* Слой 3 = режим прокрутки. Умножитель/делитель 1/4 = как делитель 4 в QMK. */
-        scroller {
-            layers = <3>;
-            /* Для прокрутки оси тоже сначала меняем местами. Если страница едет в обратную
-             * сторону, вставьте перед scaler: &zip_scroll_transform INPUT_TRANSFORM_Y_INVERT */
-            input-processors = <&zip_xy_transform INPUT_TRANSFORM_XY_SWAP
-                                &zip_xy_to_scroll_mapper
-                                &kb_scroll_scaler 1 4>;
-        };
-    };
 };
