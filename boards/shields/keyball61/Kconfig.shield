@@ -1,0 +1,4 @@
+# Keyball61 (ZMK)
+
+config SHIELD_KEYBALL61_RIGHT
+	def_bool $(shields_list_contains,keyball61_right)

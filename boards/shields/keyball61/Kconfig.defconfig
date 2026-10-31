@@ -1,0 +1,15 @@
+# Правая половина (с трекболом) работает как central:
+# именно она подключается к компьютеру по Bluetooth/USB.
+
+if SHIELD_KEYBALL61_RIGHT
+
+config ZMK_KEYBOARD_NAME
+	default "Keyball61"
+
+config ZMK_SPLIT
+	default y
+
+config ZMK_SPLIT_ROLE_CENTRAL
+	default y
+
+endif
