@@ -2,15 +2,15 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: george-norton
-      url-base: https://github.com/george-norton
+    - name: finn-e
+      url-base: https://github.com/finn-e
   projects:
     - name: zmk
       remote: zmkfirmware
       revision: main
       import: app/west.yml
-    - name: zmk-driver-pmw3360
-      remote: george-norton
+    - name: zmk-driver-pmw3389
+      remote: finn-e
       revision: main
   self:
     path: config
