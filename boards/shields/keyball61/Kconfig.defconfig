@@ -1,7 +1,7 @@
-# Правая половина (с трекболом) работает как central:
-# именно она подключается к компьютеру по Bluetooth/USB.
+# Донгл (central) подключается к ПК по USB; правая половина (peripheral)
+# подключается к донглу по Bluetooth.
 
-if SHIELD_KEYBALL61_RIGHT
+if SHIELD_KEYBALL61_DONGLE
 
 config ZMK_KEYBOARD_NAME
 	default "Keyball61"
@@ -10,6 +10,36 @@ config ZMK_SPLIT
 	default y
 
 config ZMK_SPLIT_ROLE_CENTRAL
+	default y
+
+config ZMK_POINTING
+	default y
+
+# Сейчас подключена только правая половина.
+# Когда добавим левую: поставить 2, а BT_MAX_CONN и BT_MAX_PAIRED = 7.
+config ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS
+	default 1
+
+config BT_MAX_CONN
+	default 6
+
+config BT_MAX_PAIRED
+	default 6
+
+endif
+
+if SHIELD_KEYBALL61_RIGHT
+
+config ZMK_KEYBOARD_NAME
+	default "Keyball61 R"
+
+config ZMK_SPLIT
+	default y
+
+config ZMK_POINTING
+	default y
+
+config SPI
 	default y
 
 endif

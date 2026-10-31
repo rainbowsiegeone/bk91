@@ -1,12 +1,36 @@
 /*
- * ТЕСТОВАЯ версия: без трекбола (SPI отключён).
- * Нужна только для проверки, мешает ли трекбол опросу клавиш ряда 4.
- * Содержимое вставить в keyball61_right.overlay вместо оригинала.
+ * Правая половина Keyball61 (с трекболом PMW3360), периферийная часть:
+ * подключается к донглу, а не к компьютеру.
+ *   NCS  -> Pro Micro D10  (P0.09)
+ *   MOSI -> Pro Micro D16  (P0.10)
+ *   MISO -> Pro Micro D14  (P1.11)
+ *   SCLK -> Pro Micro D15  (P1.13)
  */
 
 #include "keyball61.dtsi"
+#include <input/processors.dtsi>
+#include <dt-bindings/zmk/input_transform.h>
 
 /* Ключи правой половины идут в карте после ключей левой */
 &default_transform {
     col-offset = <9>;
+};
+
+&pro_micro_spi {
+    status = "okay";
+    cs-gpios = <&pro_micro 10 GPIO_ACTIVE_LOW>;
+
+    trackball: trackball@0 {
+        compatible = "pixart,pmw3360";
+        reg = <0>;
+        spi-max-frequency = <2000000>;
+        cpi = <500>;
+    };
+};
+
+/* События трекбола передаются донглу. Оси датчика повёрнуты на 90 градусов
+ * относительно курсора, поэтому меняем X и Y местами уже здесь. */
+&trackball_split {
+    device = <&trackball>;
+    input-processors = <&zip_xy_transform INPUT_TRANSFORM_XY_SWAP>;
 };

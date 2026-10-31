@@ -1,6 +1,7 @@
 include:
   - board: nice_nano//zmk
+    shield: keyball61_dongle
+  - board: nice_nano//zmk
     shield: keyball61_right
-    snippet: zmk-usb-logging
   - board: nice_nano//zmk
     shield: settings_reset

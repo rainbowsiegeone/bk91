@@ -1,0 +1,43 @@
+/*
+ * Донгл Keyball61: подключается к компьютеру по USB, клавиш и трекбола
+ * на нём нет. Принимает данные от половин по Bluetooth.
+ */
+
+#include "keyball61_layout.dtsi"
+#include <input/processors.dtsi>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+
+/ {
+    chosen {
+        zmk,kscan = &mock_kscan;
+    };
+
+    mock_kscan: mock_kscan_0 {
+        compatible = "zmk,kscan-mock";
+        columns = <0>;
+        rows = <0>;
+        events = <0>;
+    };
+
+    input_processors {
+        /* Масштабирование прокрутки с накоплением остатка (плавный скролл) */
+        kb_scroll_scaler: kb_scroll_scaler {
+            compatible = "zmk,input-processor-scaler";
+            #input-processor-cells = <2>;
+            type = <INPUT_EV_REL>;
+            codes = <INPUT_REL_WHEEL INPUT_REL_HWHEEL>;
+            track-remainders;
+        };
+    };
+};
+
+/* Включаем обработку трекбола на донгле */
+&trackball_listener {
+    status = "okay";
+
+    /* Слой 3 = режим прокрутки. 1/4 как делитель 4 в QMK. */
+    scroller {
+        layers = <3>;
+        input-processors = <&zip_xy_to_scroll_mapper &kb_scroll_scaler 1 4>;
+    };
+};
