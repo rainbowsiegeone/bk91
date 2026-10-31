@@ -25,6 +25,14 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         cpi = <500>;
+
+        /* Энергосбережение (драйвер finn-e/zmk-driver-pmw3389):
+         * - режим покоя датчика включён по умолчанию (опция force-awake его бы отключила);
+         * - enable-at-boot: запустить датчик сразу при старте (без этого он не стартует);
+         * - polling-interval: период опроса датчика в мкс (у нас нет вывода MOTION). */
+        enable-at-boot;
+        polling-interval = <2000>;
+        burst-accumulation-max-samples = <1>;
     };
 };
 
