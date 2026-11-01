@@ -6,6 +6,7 @@
 #include "keyball61_layout.dtsi"
 #include "keyball61_trackball_split.dtsi"
 #include <input/processors.dtsi>
+#include <dt-bindings/zmk/input_transform.h>
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
@@ -29,16 +30,69 @@
             codes = <INPUT_REL_WHEEL INPUT_REL_HWHEEL>;
             track-remainders;
         };
+
+        /* Масштабирование курсора с накоплением остатка (медленный режим без «мёртвых» шагов) */
+        kb_xy_scaler: kb_xy_scaler {
+            compatible = "zmk,input-processor-scaler";
+            #input-processor-cells = <2>;
+            type = <INPUT_EV_REL>;
+            codes = <INPUT_REL_X INPUT_REL_Y>;
+            track-remainders;
+        };
+    };
+
+    /* Слои-флаги скорости прокрутки + слой 3 (режим прокрутки) = слои 8 и 9 */
+    conditional_layers {
+        compatible = "zmk,conditional-layers";
+
+        scroll_slow_active {
+            if-layers = <3 6>;
+            then-layer = <8>;
+        };
+
+        scroll_fast_active {
+            if-layers = <3 7>;
+            then-layer = <9>;
+        };
     };
 };
 
-/* Включаем обработку трекбола на донгле */
+/* Включаем обработку трекбола на донгле.
+ *
+ * Правила проверяются сверху вниз, срабатывает первое подошедшее.
+ * Слои: 3 = прокрутка (удерживается), 4/5 = курсор медленнее/быстрее (включаются клавишей),
+ *       6/7 = прокрутка медленнее/быстрее (включаются клавишей), 8/9 = служебные.
+ */
 &trackball_listener {
     status = "okay";
 
-    /* Слой 3 = режим прокрутки. 1/4 как делитель 4 в QMK. */
+    /* Прокрутка, медленная (слой 3 + флаг 6) */
+    scroll_slow {
+        layers = <8>;
+        input-processors = <&zip_xy_to_scroll_mapper &zip_scroll_transform INPUT_TRANSFORM_Y_INVERT &kb_scroll_scaler 1 8>;
+    };
+
+    /* Прокрутка, быстрая (слой 3 + флаг 7) */
+    scroll_fast {
+        layers = <9>;
+        input-processors = <&zip_xy_to_scroll_mapper &zip_scroll_transform INPUT_TRANSFORM_Y_INVERT &kb_scroll_scaler 1 2>;
+    };
+
+    /* Прокрутка, обычная. 1/4 как делитель 4 в QMK. */
     scroller {
         layers = <3>;
-        input-processors = <&zip_xy_to_scroll_mapper &kb_scroll_scaler 1 4>;
+        input-processors = <&zip_xy_to_scroll_mapper &zip_scroll_transform INPUT_TRANSFORM_Y_INVERT &kb_scroll_scaler 1 4>;
+    };
+
+    /* Курсор медленнее: в 2 раза */
+    cursor_slow {
+        layers = <4>;
+        input-processors = <&kb_xy_scaler 1 2>;
+    };
+
+    /* Курсор быстрее: в 2 раза */
+    cursor_fast {
+        layers = <5>;
+        input-processors = <&kb_xy_scaler 2 1>;
     };
 };
