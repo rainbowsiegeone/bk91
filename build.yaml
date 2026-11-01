@@ -4,4 +4,6 @@ include:
   - board: nice_nano//zmk
     shield: keyball61_right
   - board: nice_nano//zmk
+    shield: keyball61_left
+  - board: nice_nano//zmk
     shield: settings_reset

@@ -15,16 +15,15 @@ config ZMK_SPLIT_ROLE_CENTRAL
 config ZMK_POINTING
 	default y
 
-# Сейчас подключена только правая половина.
-# Когда добавим левую: поставить 2, а BT_MAX_CONN и BT_MAX_PAIRED = 7.
+# Две периферийные части: левая и правая половины.
 config ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS
-	default 1
+	default 2
 
 config BT_MAX_CONN
-	default 6
+	default 7
 
 config BT_MAX_PAIRED
-	default 6
+	default 7
 
 endif
 
@@ -40,6 +39,20 @@ config ZMK_POINTING
 	default y
 
 config SPI
+	default y
+
+endif
+
+if SHIELD_KEYBALL61_LEFT
+
+config ZMK_KEYBOARD_NAME
+	default "Keyball61 L"
+
+config ZMK_SPLIT
+	default y
+
+# Узлы передачи данных трекбола общие для всех частей, поэтому поддержка нужна и здесь
+config ZMK_POINTING
 	default y
 
 endif

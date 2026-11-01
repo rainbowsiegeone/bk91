@@ -8,5 +8,6 @@ features:
   - keys
   - pointers
 siblings:
+  - keyball61_left
   - keyball61_right
   - keyball61_dongle
