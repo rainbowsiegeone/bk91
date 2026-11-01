@@ -8,6 +8,7 @@
  */
 
 #include "keyball61.dtsi"
+#include "keyball61_trackball_split.dtsi"
 #include <input/processors.dtsi>
 #include <dt-bindings/zmk/input_transform.h>
 

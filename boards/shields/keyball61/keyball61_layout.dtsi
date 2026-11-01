@@ -1,7 +1,6 @@
 /*
- * Общая часть для ВСЕХ частей клавиатуры (донгл и половины).
- * Здесь матрица клавиш и узлы передачи данных трекбола.
- * Узлы и их имена должны быть одинаковы у всех частей.
+ * Общая часть для ВСЕХ частей клавиатуры (донгл, левая и правая половины):
+ * матрица клавиш. Узлы трекбола вынесены в keyball61_trackball_split.dtsi.
  */
 
 #include <dt-bindings/zmk/matrix_transform.h>
@@ -22,23 +21,5 @@
             RC(5,3) RC(6,3) RC(7,3) RC(3,5) RC(3,6) RC(3,7) RC(3,8) RC(3,17) RC(3,16) RC(3,15) RC(3,14) RC(7,12) RC(6,12) RC(5,12)
             RC(5,4) RC(6,4) RC(7,4) RC(4,5) RC(4,6) RC(4,7) RC(4,8) RC(4,17) RC(4,16) RC(4,15) RC(4,14) RC(7,13) RC(6,13) RC(5,13)
         >;
-    };
-
-    /* Трекбол стоит на правой половине (периферийной): его события
-     * пересылаются донглу через input-split. */
-    split_inputs {
-        #address-cells = <1>;
-        #size-cells = <0>;
-
-        trackball_split: trackball_split@0 {
-            compatible = "zmk,input-split";
-            reg = <0>;
-        };
-    };
-
-    trackball_listener: trackball_listener {
-        compatible = "zmk,input-listener";
-        status = "disabled";
-        device = <&trackball_split>;
     };
 };

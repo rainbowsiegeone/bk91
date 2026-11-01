@@ -51,8 +51,4 @@ config ZMK_KEYBOARD_NAME
 config ZMK_SPLIT
 	default y
 
-# Узлы передачи данных трекбола общие для всех частей, поэтому поддержка нужна и здесь
-config ZMK_POINTING
-	default y
-
 endif
